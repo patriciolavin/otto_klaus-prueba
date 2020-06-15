@@ -1,9 +1,12 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase)
+
 const express = require('express');
 const cors = require('cors')
+
 const router = express();
+
 router.use(cors({origin: true}))
 
 router.get("/toy/:id", async (req, res) => {
@@ -39,7 +42,10 @@ router.post("/toy", async (req, res) => {
   const toy = await admin
     .firestore()
     .collection("toys")
-    .add(req.body);
+    .add(req.body)
+    .then(docRef => {
+      return docRef.id
+    });
   res.send(toy);
 });
 
