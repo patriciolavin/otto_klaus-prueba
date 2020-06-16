@@ -4,23 +4,33 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
+const emptyToy = {
+                  data: {
+                    code: '',
+                    name: '',
+                    stock: 0,
+                    price: 0
+                  },
+                  id: null,
+                 };
+
 export default new Vuex.Store({
+
   state: {
     toys: [],
     showForm: false,
-    currentToy: {
-      id: null,
-      data: {
-        code: '',
-        name: '',
-        stock: 0,
-        price: 0
-      }
-
-    }
+    currentToy: emptyToy,
+    overlay: false
   },
-  
+
   mutations: {
+    SET_EMPTY_TOY (state) {
+      state.currentToy.id = null
+      Object.keys(emptyToy.data).forEach(key => {
+        state.currentToy.data[key] = emptyToy.data[key]
+      })
+    },
+
     SET_TOYS(state, data) {
       state.toys = data
     },
@@ -30,7 +40,6 @@ export default new Vuex.Store({
     HIDE_TOY_FORM(state) {
       state.showForm = false
     },
-
     UPDATE_CODE(state, code) {
       state.currentToy.data.code = code 
     },
@@ -43,22 +52,39 @@ export default new Vuex.Store({
     UPDATE_PRICE(state, price) {
       state.currentToy.data.price = price
     },
+    SET_CURRENT_TOY(state, toy) {
+      state.currentToy = toy
+    },
+    DISPLAY_OVERLAY(state) {
+      state.overlay = true
+    },
+    HIDE_OVERLAY(state) {
+      state.overlay = false
+    }
   },
 
   actions: {
-    setToys({ commit }){
+    getToys({ commit }){
+      commit('DISPLAY_OVERLAY')
       axios.get('https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toys')
       .then(response => {
+        commit('SET_EMPTY_TOY')
         commit('SET_TOYS', response.data)
-      })
+      
+      }).finally(() => {
+        commit('HIDE_OVERLAY')
+      }) 
     },
     displayToyForm({commit}) {
       commit('DISPLAY_TOY_FORM')
     },
+    cancelForm({commit}) {
+      commit('SET_EMPTY_TOY')
+      commit('HIDE_TOY_FORM')
+    },
     hideToyForm({commit}) {
       commit('HIDE_TOY_FORM')
     },
-
     updateCode({commit}, code) {
       commit('UPDATE_CODE', code)
     },
@@ -72,19 +98,33 @@ export default new Vuex.Store({
       commit('UPDATE_PRICE', price)
     },
     // llamar a las acciones desde el store dentro de la misma función, se usa "dispatch"
-    postToy({dispatch, state}) {
+    postToy({dispatch, state, commit }) {
       axios.post('https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy', state.currentToy.data)
       .then(() => {
-        dispatch('setToys')
+        commit('SET_EMPTY_TOY')
+        dispatch('getToys')
       })
     },
-    deleteToy({ dispatch}, id) {
+    deleteToy({ dispatch, commit}, id) {
       axios.delete(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy/${id}`)
       .then(() => {
-        dispatch('setToys')
+        commit('SET_EMPTY_TOY')
+        dispatch('getToys')
+      })
+    },
+    setCurrentToy({commit}, id) {
+      axios.get(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy/${id}`)
+      .then((response) => {
+        commit('SET_CURRENT_TOY', response.data)
+      })
+    },
+    updateToy({state, dispatch }, id) {
+      axios.put(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy/${id}`, state.currentToy.data)
+      .then(() => {
+        dispatch('getToys')
       })
     }
-  },
+ },
 
   modules: {
 

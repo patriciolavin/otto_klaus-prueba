@@ -3,16 +3,12 @@
     <v-dialog
       :value="showForm"
       width="500"
-      persistant
+      persistent
     >
-
 
       <v-card>
         <v-card-title
-          class="headline grey lighten-2"
-          primary-title
-        >
-          Privacy Policy
+          class="headline grey lighten-2" primary-title>{{ !!currentToy.id ?  'Actualizar el Juguete' : 'Ingresar el Nuevo Juguete' }}
         </v-card-title>
 
         <v-card-text>
@@ -26,8 +22,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary" text @click="submitForm">Ok</v-btn>
+          <v-btn color="primary" text @click="submitForm()">{{ !!currentToy.id ? 'Actualizar' : 'Crear'}}</v-btn>
+          <v-btn color="warning" text @click="cancelForm()">Cancelar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -41,14 +38,20 @@ import {mapState, mapActions} from 'vuex'
 
 export default {
     methods: {
-        ...mapActions (['updateCode', 'updateName', 'updateStock', 'updatePrice', 'postToy', 'hideToyForm']),
-        submitForm() {
-            this.postToy()
-            this.hideToyForm()
-        }
-
+        ...mapActions (['updateCode', 'updateName', 'updateStock', 'updatePrice', 'postToy', 'hideToyForm', 'updateToy', 'cancelForm']),
         
+        submitForm() {
+            if(this.currentToy.id) {
+              // si tiene id se llama a la función que actualiza los datos
+              this.updateToy(this.currentToy.id)
+            }
+            else {
+              this.postToy()
+            }
+              this.hideToyForm()
+        },
     },
+
     computed: {
         ...mapState(['showForm', 'currentToy'])
     },

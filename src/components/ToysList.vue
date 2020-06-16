@@ -17,10 +17,12 @@
             <td>{{ toy.data.name }}</td>
             <td>{{ toy.data.stock }}</td>
             <td>{{ toy.data.price }}</td>
-            <v-btn text @click="editToy">
-            <v-icon>mdi-pencil</v-icon></v-btn>
-            <v-btn text @click="removeToy(toy.id)">
-            <v-icon>mdi-delete</v-icon></v-btn>
+            <td>
+                <v-btn text @click="editToy(toy.id)">
+                <v-icon>mdi-pencil</v-icon></v-btn>
+                <v-btn text @click="removeToy(toy.id)">
+                <v-icon>mdi-delete</v-icon></v-btn>
+            </td>
             </tr>
         </tbody>
         </template>
@@ -35,20 +37,36 @@ import { mapState, mapActions} from 'vuex'
 
 export default {
     methods: {
-        ...mapActions(['setToys', 'deleteToy']),
+        ...mapActions(['getToys', 'deleteToy', 'editToy', 'displayToyForm', 'setCurrentToy']),
         removeToy(id) {
             let confirmation = confirm('Desea eliminar este juguete?')
             if (confirmation) {
                 this.deleteToy(id)
             }
+        },
+        
+        editToy(id) {
+            //establecer el juguete actual, en base al id entrergado.    
+            this.setCurrentToy(id)
+            // desplegar el formulario con el juguete actual.
+            this.displayToyForm()
         }
+
+        
+        // editToy(id) {
+        //     let confirmation = confirm('Desea editar este juguete?')
+        //     if (confirmation) {
+        //         this.editToy(id)
+        //     }
+        // },
     },
 
     computed: {
         ...mapState(['toys'])
     },
+
     created(){
-        this.setToys()
+        this.getToys()
     }
 }
 </script>
