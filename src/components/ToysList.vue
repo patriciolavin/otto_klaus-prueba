@@ -19,7 +19,7 @@
             <td>{{ toy.data.price }}</td>
             <v-btn text @click="editToy">
             <v-icon>mdi-pencil</v-icon></v-btn>
-            <v-btn text @click="removeToy(toy,id)">
+            <v-btn text @click="removeToy(toy.id)">
             <v-icon>mdi-delete</v-icon></v-btn>
             </tr>
         </tbody>

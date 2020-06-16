@@ -79,7 +79,7 @@ export default new Vuex.Store({
       })
     },
     deleteToy({ dispatch}, id) {
-      axios.delete(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy${id}`)
+      axios.delete(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy/${id}`)
       .then(() => {
         dispatch('setToys')
       })
