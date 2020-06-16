@@ -4,30 +4,33 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
-const emptyToy = {
-                  data: {
-                    code: '',
-                    name: '',
-                    stock: 0,
-                    price: 0
-                  },
-                  id: null,
-                 };
+function emptyToy() {
+  return {
+   id: null,
+   data: {
+     name: '',
+     code: '',
+     price: 0,
+     stock: 0
+   }
+ }
+}
 
 export default new Vuex.Store({
 
   state: {
     toys: [],
     showForm: false,
-    currentToy: emptyToy,
+    currentToy: emptyToy(),
     overlay: false
   },
 
   mutations: {
-    SET_EMPTY_TOY (state) {
+    SET_EMPTY_TOY(state){
+      const empty = emptyToy();
       state.currentToy.id = null
-      Object.keys(emptyToy.data).forEach(key => {
-        state.currentToy.data[key] = emptyToy.data[key]
+      Object.keys(empty.data).forEach(key => {
+        state.currentToy.data[key] = empty.data[key]
       })
     },
 
@@ -105,10 +108,9 @@ export default new Vuex.Store({
         dispatch('getToys')
       })
     },
-    deleteToy({ dispatch, commit}, id) {
+    deleteToy({ dispatch }, id) {
       axios.delete(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy/${id}`)
       .then(() => {
-        commit('SET_EMPTY_TOY')
         dispatch('getToys')
       })
     },
