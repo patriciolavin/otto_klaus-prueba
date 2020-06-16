@@ -7,8 +7,19 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     toys: [],
-    showForm: false
+    showForm: false,
+    currentToy: {
+      id: null,
+      data: {
+        code: '',
+        name: '',
+        stock: 0,
+        price: 0
+      }
+
+    }
   },
+  
   mutations: {
     SET_TOYS(state, data) {
       state.toys = data
@@ -18,7 +29,20 @@ export default new Vuex.Store({
     },
     HIDE_TOY_FORM(state) {
       state.showForm = false
-    }
+    },
+
+    UPDATE_CODE(state, code) {
+      state.currentToy.data.code = code 
+    },
+    UPDATE_NAME(state, name) {
+      state.currentToy.data.name = name
+    },
+    UPDATE_STOCK(state, stock) {
+      state.currentToy.data.stock = stock
+    },
+    UPDATE_PRICE(state, price) {
+      state.currentToy.data.price = price
+    },
   },
 
   actions: {
@@ -33,6 +57,32 @@ export default new Vuex.Store({
     },
     hideToyForm({commit}) {
       commit('HIDE_TOY_FORM')
+    },
+
+    updateCode({commit}, code) {
+      commit('UPDATE_CODE', code)
+    },
+    updateName({commit}, name) {
+      commit('UPDATE_NAME', name)
+    },
+    updateStock({commit}, stock) {
+      commit('UPDATE_STOCK', stock)
+    },
+    updatePrice({commit}, price) {
+      commit('UPDATE_PRICE', price)
+    },
+    // llamar a las acciones desde el store dentro de la misma función, se usa "dispatch"
+    postToy({dispatch, state}) {
+      axios.post('https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy', state.currentToy.data)
+      .then(() => {
+        dispatch('setToys')
+      })
+    },
+    deleteToy({ dispatch}, id) {
+      axios.delete(`https://us-central1-otto-klaus-prueba.cloudfunctions.net/toys/toy${id}`)
+      .then(() => {
+        dispatch('setToys')
+      })
     }
   },
 

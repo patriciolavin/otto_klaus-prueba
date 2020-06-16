@@ -2,9 +2,8 @@
     <div>
       <app-bar></app-bar>
       <v-main> 
-        TOYS
         <v-btn @click="displayToyForm">Nuevo Juguete</v-btn>
-        <toys-list></toys-list>
+         <toys-list></toys-list>
         <toy-form></toy-form>
       </v-main>
     </div>
